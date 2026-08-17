@@ -19,4 +19,59 @@ model Usuario {
   senhaHash    String
   criadoEm     DateTime @default(now())
   atualizadoEm DateTime @updatedAt
+
+
+  contas       Conta[]
+  categorias   Categoria[]
+  transacoes   Transacao[]
+}
+
+model Conta {
+  id           String        @id @default(uuid())
+  nome         String
+  saldo        Decimal       @db.Decimal(15, 2)
+  usuarioId    String
+
+  criadoEm     DateTime      @default(now())
+  atualizadoEm DateTime      @updatedAt
+
+  usuario      Usuario       @relation(fields: [usuarioId], references: [id])
+  transacoes   Transacao[]
+}
+
+model Categoria {
+  id           String        @id @default(uuid())
+  nome         String
+  tipo         TipoTransacao
+  usuarioId    String
+
+  criadoEm     DateTime      @default(now())
+  atualizadoEm DateTime      @updatedAt
+
+  usuario      Usuario       @relation(fields: [usuarioId], references: [id])
+  transacoes   Transacao[]
+}
+
+
+model Transacao {
+  id           String        @id @default(uuid())
+  descricao    String
+  valor        Decimal       @db.Decimal(15, 2)
+  tipo         TipoTransacao
+  data         DateTime
+  usuarioId    String
+  contaId      String
+  categoriaId  String
+
+  criadoEm     DateTime      @default(now())
+  atualizadoEm DateTime      @updatedAt
+
+  usuario      Usuario       @relation(fields: [usuarioId], references: [id])
+  conta        Conta         @relation(fields: [contaId], references: [id])
+  categoria    Categoria     @relation(fields: [categoriaId], references: [id])
+}
+
+enum TipoTransacao {
+  RECEITA
+  DESPESA
 }
